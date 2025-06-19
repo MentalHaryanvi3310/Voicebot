@@ -1,4 +1,4 @@
-const apiKey = "YOUR_OPENAI_API_KEY"; // Replace with your real API key securely in production
+const apiKey = "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"; // Replace with your real API key securely in production
 const startBtn = document.getElementById("start-btn");
 const questionText = document.getElementById("question");
 const responseText = document.getElementById("response");
