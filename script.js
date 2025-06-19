@@ -2,7 +2,7 @@ const startButton = document.getElementById('start');
 const transcriptDiv = document.getElementById('transcript');
 const responseDiv = document.getElementById('response');
 
-const API_KEY = "YOUR_OPENAI_API_KEY";
+const API_KEY = "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";
 
 startButton.onclick = () => {
   const recognition = new(window.SpeechRecognition || window.webkitSpeechRecognition)();
