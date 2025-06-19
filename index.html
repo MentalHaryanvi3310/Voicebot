@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Assistant - Home.LLC Interview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .interview-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .voice-controls {
+            margin: 30px 0;
+        }
+
+        .record-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            margin: 10px;
+            min-width: 200px;
+        }
+
+        .record-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .record-btn:active {
+            transform: translateY(0);
+        }
+
+        .record-btn.recording {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            animation: recording-pulse 1s infinite;
+        }
+
+        @keyframes recording-pulse {
+            0% { box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3); }
+            50% { box-shadow: 0 4px 25px rgba(244, 67, 54, 0.6); }
+            100% { box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3); }
+        }
+
+        .record-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .clear-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            margin: 10px;
+            min-width: 150px;
+        }
+
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .clear-btn:active {
+            transform: translateY(0);
+        }
+
+        .clear-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status.listening {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+            border: 2px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .status.processing {
+            background: rgba(255, 193, 7, 0.1);
+            color: #FF9800;
+            border: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status.speaking {
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196F3;
+            border: 2px solid rgba(33, 150, 243, 0.3);
+        }
+
+        .status.error {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+            border: 2px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .conversation {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .message {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 15px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid #2196F3;
+        }
+
+        .bot-message {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .message-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-message .message-label {
+            color: #2196F3;
+        }
+
+        .bot-message .message-label {
+            color: #4CAF50;
+        }
+
+        .warning {
+            color: #FF9800;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .record-btn {
+                padding: 15px 30px;
+                font-size: 1rem;
+                min-width: 180px;
+            }
+        }
+
+        .feature-list {
+            text-align: left;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(103, 126, 234, 0.1);
+            border-radius: 10px;
+            border: 2px solid rgba(103, 126, 234, 0.3);
+        }
+
+        .feature-list h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="interview-badge">🎯 Job Interview Assessment</div>
+            <h1>🎤 AI Voice Assistant</h1>
+            <p>Voice-enabled chatbot for Home.LLC interview assessment</p>
+        </div>
+
+        <div class="feature-list">
+            <h3>Features</h3>
+            <ul>
+                <li>Voice input via microphone</li>
+                <li>AI-powered responses using Google Gemini</li>
+                <li>Text-to-speech output</li>
+                <li>Real-time conversation display</li>
+                <li>Mobile responsive design</li>
+            </ul>
+        </div>
+
+        <div class="voice-controls">
+            <button id="recordBtn" class="record-btn">🎤 Start Recording</button>
+            <button id="clearBtn" class="clear-btn">🗑️ Clear Chat</button>
+        </div>
+
+        <div id="status" class="status">
+            Click "Start Recording" to begin your interview conversation
+        </div>
+
+        <div id="conversation" class="conversation"></div>
+    </div>
+
+    <script>
+        class VoiceChatbot {
+            constructor() {
+                this.recognition = null;
+                this.synthesis = window.speechSynthesis;
+                this.isRecording = false;
+                this.isProcessing = false;
+                this.apiKey = 'AIzaSyBM1E9vnbj36nYcU5EDtj16fFJK4qSmHaI'; // Embedded API key
+                
+                // Resume data for personalized responses
+                this.resumeData = {
+                    name: "Aniket",
+                    summary: "Cybersecurity professional with over 5 years' experience in network security, digital forensics, and incident response. Demonstrates hands-on expertise in configuring firewalls, IDS/IPS systems, and advanced security tools to optimize network performance and minimize threats. Proven track record in conducting thorough risk assessments and implementing robust defense measures aligned with industry standards and compliance requirements.",
+                    education: [
+                        { institution: "Kurukshetra University", degree: "Bachelor's degree, BCA" },
+                        { institution: "D.A.V. Public School - India", degree: "High School Diploma" }
+                    ],
+                    experience: [
+                        { company: "Grey Shield", role: "Cyber Security Analysts", duration: "Oct 2023 - Present" },
+                        { company: "Telko", role: "Senior Network Engineer", duration: "Oct 2024 - Mar 2025" },
+                        { company: "Cyber Rakshak Org.", role: "Cyber Defensive Security", duration: "May 2024 - Oct 2024" },
+                        { company: "SHERLOCK INSTITUTE OF FORENSIC SCIENCE", role: "Digital forensics Investigation", duration: "Apr 2024 - May 2024" },
+                        { company: "Solitaire Infosys Inc", role: "Network Support Engineer", duration: "Aug 2023 - Sep 2023" }
+                    ],
+                    projects: [
+                        { name: "Advanced Fake News Detection System", description: "Its a technological solution/software tool for Tracking & Tracing Fake News and its origin using official sources as the input filter. The solution should have a mechanism to mitigate the impact of the spread of Fake News by auto-populating the fake news spreaders' inboxes with the official/authenticated news content." },
+                        { name: "DDos Tool", description: "A DDoS (Distributed Denial of Service) tool is a type of software or application that is used to carry out a DDoS attack on a target website or network. DDoS attacks are a type of cyber-attack in which a large number of compromised devices, often called a \"botnet,\" are used to flood a target website or network with an overwhelming amount of traffic or requests, rendering it unable to function properly." }
+                    ],
+                    skills: {
+                        security: "Security Engineering, Incident Response, Antivirus, IPS/IDS, Network Security, Web Application Firewall, Network Intrusion Prevention, Virtual Private Networks, Network Access Controls, End Point Protection, Security Operations, Information Security Analysis, IT Security Assessments, Vulnerability, Vulnerability Assessment, SOAR, Auditing, OWASP",
+                        infrastructure: "Windows Server OS, Desktop OS, Network Packet Inspection, Stateful Inspection Firewalls, Database Activity Monitoring, Proxy Server, Checkpoint, Network Engineering, Cloud Infrastructure, Google Cloud Platform (GCP), Embedded Systems, Internet of Things (IoT), Splunk",
+                        professional: "Communication, Presentation Skills, Team Management, Technical Support"
+                    },
+                    certifications: [
+                        "Cisco certified Ethical Hacker",
+                        "Certified Ethical Hacker (CEH)"
+                    ]
+                };
+                
+                this.creatorName = "Aniket";
+                
+                this.recordBtn = document.getElementById('recordBtn');
+                this.status = document.getElementById('status');
+                this.conversation = document.getElementById('conversation');
+                this.clearBtn = document.getElementById('clearBtn');
+                
+                this.initSpeechRecognition();
+                this.bindEvents();
+                this.checkBrowserSupport();
+            }
+
+            checkBrowserSupport() {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    this.showStatus('error', '❌ Speech recognition not supported in this browser. Please use Chrome, Edge, or Safari.');
+                    this.recordBtn.disabled = true;
+                    return false;
+                }
+
+                if (!('speechSynthesis' in window)) {
+                    this.showStatus('error', '❌ Text-to-speech not supported in this browser.');
+                    return false;
+                }
+
+                return true;
+            }
+
+            initSpeechRecognition() {
+                if (!this.checkBrowserSupport()) return;
+
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                this.recognition = new SpeechRecognition();
+                
+                this.recognition.continuous = false;
+                this.recognition.interimResults = false;
+                this.recognition.lang = 'en-US';
+
+                this.recognition.onstart = () => {
+                    this.isRecording = true;
+                    this.recordBtn.textContent = '🔴 Recording... (Click to stop)';
+                    this.recordBtn.classList.add('recording');
+                    this.showStatus('listening', '🎤 Listening... Speak your question now');
+                };
+
+                this.recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    this.addMessage('user', transcript);
+                    this.processQuestion(transcript);
+                };
+
+                this.recognition.onerror = (event) => {
+                    this.showStatus('error', `❌ Speech recognition error: ${event.error}`);
+                    this.resetRecording();
+                };
+
+                this.recognition.onend = () => {
+                    this.resetRecording();
+                };
+            }
+
+            bindEvents() {
+                this.recordBtn.addEventListener('click', () => {
+                    if (this.isRecording) {
+                        this.stopRecording();
+                    } else {
+                        this.startRecording();
+                    }
+                });
+
+                this.clearBtn.addEventListener('click', () => {
+                    this.clearChat();
+                });
+
+                // Allow Enter key to start recording
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space' && !this.isRecording && !this.isProcessing) {
+                        e.preventDefault();
+                        this.startRecording();
+                    }
+                });
+            }
+
+            startRecording() {
+                if (!this.recognition || this.isProcessing) return;
+
+                try {
+                    this.recognition.start();
+                } catch (error) {
+                    this.showStatus('error', '❌ Could not start recording. Please try again.');
+                }
+            }
+
+            stopRecording() {
+                if (this.recognition && this.isRecording) {
+                    this.recognition.stop();
+                }
+            }
+
+            resetRecording() {
+                this.isRecording = false;
+                this.recordBtn.textContent = '🎤 Start Recording';
+                this.recordBtn.classList.remove('recording');
+                
+                if (!this.isProcessing) {
+                    this.showStatus('', 'Ready for next question');
+                }
+            }
+
+            async processQuestion(question) {
+                this.isProcessing = true;
+                this.recordBtn.disabled = true;
+                this.showStatus('processing', '🤖 Processing your question...');
+
+                try {
+                    // Check for special questions first
+                    const specialResponse = this.checkForSpecialQuestions(question);
+                    if (specialResponse) {
+                        this.addMessage('bot', specialResponse);
+                        this.speakResponse(specialResponse);
+                    } else {
+                        const response = await this.callGemini(question);
+                        this.addMessage('bot', response);
+                        this.speakResponse(response);
+                    }
+                } catch (error) {
+                    const errorMsg = `❌ Error: ${error.message}`;
+                    this.showStatus('error', errorMsg);
+                    this.addMessage('bot', errorMsg);
+                } finally {
+                    this.isProcessing = false;
+                    this.recordBtn.disabled = false;
+                }
+            }
+
+            checkForSpecialQuestions(question) {
+                const lowerQuestion = question.toLowerCase();
+                
+                // Check for creator questions
+                if (lowerQuestion.includes('creator') || lowerQuestion.includes('who created') || lowerQuestion.includes('who made') || lowerQuestion.includes('developer')) {
+                    return `I was created by ${this.creatorName}. He's a cybersecurity professional with expertise in network security, digital forensics, and incident response.`;
+                }
+                
+                // Check for AI tool questions
+                if (lowerQuestion.includes('ai tool') || lowerQuestion.includes('which ai') || lowerQuestion.includes('what ai') || lowerQuestion.includes('ai model') || lowerQuestion.includes('language model')) {
+                    return "Sorry, I can't tell you that.";
+                }
+                
+                return null;
+            }
+
+            generatePersonalizedPrompt(question) {
+                const lowerQuestion = question.toLowerCase();
+                let contextualInfo = "";
+                
+                // Check for personal questions and add relevant context
+                if (lowerQuestion.includes('yourself') || lowerQuestion.includes('about you') || lowerQuestion.includes('introduce')) {
+                    contextualInfo = `My name is ${this.resumeData.name}. ${this.resumeData.summary}`;
+                }
+                
+                if (lowerQuestion.includes('experience') || lowerQuestion.includes('work') || lowerQuestion.includes('job')) {
+                    const recentExperience = this.resumeData.experience.slice(0, 3).map(exp => 
+                        `${exp.role} at ${exp.company} (${exp.duration})`
+                    ).join(', ');
+                    contextualInfo += ` My recent work experience includes: ${recentExperience}.`;
+                }
+                
+                if (lowerQuestion.includes('skills') || lowerQuestion.includes('technical') || lowerQuestion.includes('expertise')) {
+                    contextualInfo += ` My key skills include: Security Engineering (${this.resumeData.skills.security}), Infrastructure & Technical (${this.resumeData.skills.infrastructure}), and Professional skills (${this.resumeData.skills.professional}).`;
+                }
+                
+                if (lowerQuestion.includes('education') || lowerQuestion.includes('study') || lowerQuestion.includes('degree')) {
+                    const education = this.resumeData.education.map(edu => 
+                        `${edu.degree} from ${edu.institution}`
+                    ).join(', ');
+                    contextualInfo += ` My educational background: ${education}.`;
+                }
+                
+                if (lowerQuestion.includes('project') || lowerQuestion.includes('portfolio')) {
+                    const projects = this.resumeData.projects.map(proj => 
+                        `${proj.name}: ${proj.description}`
+                    ).join('. ');
+                    contextualInfo += ` Some of my notable projects include: ${projects}.`;
+                }
+                
+                if (lowerQuestion.includes('certification') || lowerQuestion.includes('certified')) {
+                    contextualInfo += ` My certifications include: ${this.resumeData.certifications.join(', ')}.`;
+                }
+                
+                if (lowerQuestion.includes('strength') || lowerQuestion.includes('strong')) {
+                    contextualInfo += ` My key strengths are in cybersecurity, network security, digital forensics, incident response, and implementing robust defense measures. I have hands-on expertise with firewalls, IDS/IPS systems, and advanced security tools.`;
+                }
+                
+                if (lowerQuestion.includes('weakness') || lowerQuestion.includes('improve') || lowerQuestion.includes('challenge')) {
+                    contextualInfo += ` I'm always looking to improve my skills and stay updated with the latest cybersecurity trends and technologies. I believe in continuous learning and adapting to new security challenges.`;
+                }
+                
+                return `${contextualInfo} Answer this question in first person as if you're the applicant being interviewed for the AI Agent role at Home.LLC. Be professional, confident, and showcase relevant skills and experience. Question: ${question}`;
+            }
+
+            async callGemini(question) {
+                const prompt = this.generatePersonalizedPrompt(question);
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are an AI agent job applicant being interviewed at Home.LLC. Respond in first person as the candidate. Be professional, confident, and highlight relevant technical skills, experience with AI/ML, problem-solving abilities, and enthusiasm for the role. ${prompt}`
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 500,
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // Check if the response has the expected structure
+                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                    throw new Error('Invalid response structure from Gemini API');
+                }
+                
+                return data.candidates[0].content.parts[0].text.trim();
+            }
+
+            speakResponse(text) {
+                this.showStatus('speaking', '🔊 Speaking response...');
+                
+                // Cancel any ongoing speech
+                this.synthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                
+                utterance.onend = () => {
+                    this.showStatus('', 'Ready for next question');
+                };
+                
+                utterance.onerror = (event) => {
+                    this.showStatus('error', `❌ Speech synthesis error: ${event.error}`);
+                };
+                
+                this.synthesis.speak(utterance);
+            }
+
+            addMessage(type, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}-message`;
+                
+                const label = type === 'user' ? 'Your Question' : 'AI Response';
+                messageDiv.innerHTML = `
+                    <div class="message-label">${label}</div>
+                    <div>${content}</div>
+                `;
+                
+                this.conversation.appendChild(messageDiv);
+                this.conversation.scrollTop = this.conversation.scrollHeight;
+            }
+
+            showStatus(type, message) {
+                this.status.className = `status ${type}`;
+                this.status.innerHTML = type === 'processing' ? 
+                    `<span class="loader"></span>${message}` : message;
+            }
+
+            clearChat() {
+                this.conversation.innerHTML = '';
+                this.showStatus('', 'Chat cleared. Click "Start Recording" to begin your interview conversation');
+            }
+        }
+
+        // Initialize the chatbot when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new VoiceChatbot();
+        });
+
+        // Prevent the page from being accidentally refreshed
+        window.addEventListener('beforeunload', (e) => {
+            if (document.querySelector('.conversation').children.length > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>
+
